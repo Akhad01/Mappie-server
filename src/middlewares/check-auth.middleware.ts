@@ -7,7 +7,7 @@ export class CheckAuthMiddleware implements NestMiddleware {
     const token = bearer?.split(' ')?.[1];
     if (token) {
       try {
-        req.user = jwt.verify(token, process.env.ACCESS_SECRET);
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
       } catch (e) {
         console.log(e);
       }
@@ -15,3 +15,5 @@ export class CheckAuthMiddleware implements NestMiddleware {
     next();
   }
 }
+
+
