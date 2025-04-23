@@ -22,14 +22,14 @@ export class UsersController {
     return await this.usersService.findUser(+id);
   }
 
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.usersService.removeUser(+id);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto:
   UpdateUserDto) {
     return await this.usersService.updateUser(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return await this.usersService.removeUser(+id);
   }
 }

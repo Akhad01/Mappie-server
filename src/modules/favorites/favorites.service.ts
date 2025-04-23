@@ -11,7 +11,10 @@ export class FavoritesService {
   ) {}
 
   public async getFavoritesPlaces(personId: string): Promise<OverpassNodeDto[]> {
+    console.log('personId', personId)
+    
     const favorites = await this.favoriteModel.find({ personId }).lean();
+
 
     if (favorites.length === 0) return [];
     const queryString = `[out:json];

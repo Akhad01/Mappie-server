@@ -27,8 +27,9 @@ import { CheckAuthMiddleware } from 'src/middlewares/check-auth.middleware';
   controllers: [AuthController],
   providers: [AuthService],
 })
+
 export class AuthModule {
-  configure(consumer: MiddlewareConsumer) {
+  private configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CheckAuthMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });

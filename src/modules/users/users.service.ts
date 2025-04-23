@@ -25,12 +25,15 @@ export class UsersService {
     return user;
   }
 
+  removeUser(id: number) {
+    return this.userModel.findByIdAndDelete(id);
+  }
+
   updateUser(id: number, updateUserDto: UpdateUserDto) {
     return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true
   });
 
   }
-  removeUser(id: number) {
-    return this.userModel.findByIdAndDelete(id);
-  };
+
+;
 }

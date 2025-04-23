@@ -4,30 +4,21 @@ import { filtersByCategory, IBodyCategory } from '../../constants/filters-by-cat
 
 @Injectable()
 export class DataTransformService {
-  private checkExcluded(values: string[], category: IBodyCategory) {
-    return category.exclude.some(condition =>
-      values.some(v => condition.values.includes(v)));
-  }
-
   private checkAnd(keys: string[], values: string[], category: IBodyCategory) {
     return category.and.some(condition =>
       !keys.includes(condition.field) || condition.values.length && condition.values.some(v => !values.includes(v))
     );
   }
 
+  private checkExcluded(values: string[], category: IBodyCategory) {
+    return category.exclude.some(condition =>
+      values.some(v => condition.values.includes(v)));
+  }
+
   private checkOr(keys: string[], values: string[], category: IBodyCategory) {
     return category.or.some(condition =>
       !keys.includes(condition.field) || !condition.values.some(v => values.includes(v))
     );
-  }
-
-  private placeBelongCategory(place: OverpassNodeDto, category: IBodyCategory): boolean {
-    const keys = Object.keys(place.tags);
-    const values = Object.values(place.tags);
-
-    const wrong = this.checkExcluded(values, category) || this.checkAnd(keys, values, category) || this.checkOr(keys, values, category);
-
-    return !wrong;
   }
 
   private determinePlace(place: OverpassNodeDto, categories: string[]) {
@@ -40,15 +31,13 @@ export class DataTransformService {
     return 'unknown';
   }
 
-  public transformWithoutDesc(places: OverpassNodeDto[], categories: string[]) {
-    return places
-      .filter(p => !!p.tags.name)
-      .map(p => ({
-        type: this.determinePlace(p, categories),
-        id: p.id,
-        position: [p.lat, p.lon],
-        name: p.tags['name:ru'] ?? p.tags.name
-      }));
+  private placeBelongCategory(place: OverpassNodeDto, category: IBodyCategory): boolean {
+    const keys = Object.keys(place.tags);
+    const values = Object.values(place.tags);
+
+    const wrong = this.checkExcluded(values, category) || this.checkAnd(keys, values, category) || this.checkOr(keys, values, category);
+
+    return !wrong;
   }
 
   public transformWithDesc(places: OverpassNodeDto[], categories: string[]) {
@@ -59,6 +48,17 @@ export class DataTransformService {
         id: p.id,
         position: [p.lat, p.lon],
         tags: p.tags
+      }));
+  }
+
+  public transformWithoutDesc(places: OverpassNodeDto[], categories: string[]) {
+    return places
+      .filter(p => !!p.tags.name)
+      .map(p => ({
+        type: this.determinePlace(p, categories),
+        id: p.id,
+        position: [p.lat, p.lon],
+        name: p.tags['name:ru'] ?? p.tags.name
       }));
   }
 }

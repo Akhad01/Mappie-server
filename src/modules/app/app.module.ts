@@ -11,7 +11,7 @@ import { FavoritesModule } from '../favorites/favorites.module';
     AuthModule, 
     FavoritesModule,
     ConfigModule.forRoot({ isGlobal: true }), 
-    MongooseModule.forRoot('mongodb://localhost:27017/mappie')],
+    MongooseModule.forRoot(process.env.MONGO_URL)],
   controllers: [],
   providers: [],
 })

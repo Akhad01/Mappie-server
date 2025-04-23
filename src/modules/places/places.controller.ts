@@ -13,6 +13,19 @@ export class PlacesController {
   ) {
   }
 
+  @Get('/place/:id')
+  public async getPlaceById(@Req() req, @Param('id') id) {
+    const parsedId = +id;
+    if (!parsedId) throw new BadRequestException({ error: 'wrong id' });
+    const places = await this.placesService.getPlaceById(parsedId);
+
+    const categories = Object.keys(filtersByCategory);
+    return {
+      place: this.dataTransformService.transformWithDesc(places, categories)[0],
+      // saved: req.user && await this.placesService.checkSaved(req.user.id, parsedId)
+    };
+  }
+
   @Get('/all-places')
   public async getPlaces(@Query() { latitude, longitude, radius }: GetAllPlacesDto) {
     const categories = Object.keys(filtersByCategory);
@@ -33,18 +46,5 @@ export class PlacesController {
 
     const places = await this.placesService.getPlacesByCategories(+latitude, +longitude, +radius, formattedCategories);
     return this.dataTransformService.transformWithoutDesc(places, formattedCategories);
-  }
-
-  @Get('/place/:id')
-  public async getPlaceById(@Req() req, @Param('id') id) {
-    const parsedId = +id;
-    if (!parsedId) throw new BadRequestException({ error: 'wrong id' });
-    const places = await this.placesService.getPlaceById(parsedId);
-
-    const categories = Object.keys(filtersByCategory);
-    return {
-      place: this.dataTransformService.transformWithDesc(places, categories)[0],
-      // saved: req.user && await this.placesService.checkSaved(req.user.id, parsedId)
-    };
   }
 }

@@ -10,7 +10,7 @@ import { CheckAuthMiddleware } from '../../middlewares/check-auth.middleware';
   exports:[DataTransformService]
 })
 export class PlacesModule {
-  configure(consumer: MiddlewareConsumer) {
+  private configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CheckAuthMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });

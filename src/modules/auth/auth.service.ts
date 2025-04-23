@@ -16,6 +16,29 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
+  async login(loginDto: Login): Promise<{ accessToken: string }> {
+    const { email, password } = loginDto;
+
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const accessToken = this.jwtService.sign(
+      { id: user.id },
+      {
+        secret: this.configService.get<string>(process.env.JWT_SECRET),
+      },
+    );
+
+    return { accessToken };
+  }
+
   async signUp(signupDto: SignUpDto): Promise<{ accessToken: string }> {
     const { name, email, password } = signupDto;
 
@@ -34,29 +57,6 @@ export class AuthService {
       {
         secret: this.configService.get<string>(process.env.JWT_SECRET),
         expiresIn: this.configService.get<string | number>('JWT_EXPIRES'),
-      },
-    );
-
-    return { accessToken };
-  }
-
-  async login(loginDto: Login): Promise<{ accessToken: string }> {
-    const { email, password } = loginDto;
-
-    const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    const accessToken = this.jwtService.sign(
-      { id: user.id },
-      {
-        secret: this.configService.get<string>(process.env.JWT_SECRET),
       },
     );
 

@@ -3,7 +3,6 @@ import { FavoritesService } from './favorites.service';
 import { FavoritesController } from './favorites.controller';
 import { DataTransformService } from '../places/data-transform.service';
 import { CheckAuthMiddleware } from 'src/middlewares/check-auth.middleware';
-import { Mongoose } from 'mongoose';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Favorite, FavoriteSchema } from './schemas/favorites.schema';
 
@@ -14,7 +13,7 @@ import { Favorite, FavoriteSchema } from './schemas/favorites.schema';
 })
 
 export class FavoritesModule {
-  configure(consumer: MiddlewareConsumer) {
+  private configure(consumer: MiddlewareConsumer) {
     consumer.
       apply(CheckAuthMiddleware)
       .forRoutes({ path: "*", method: RequestMethod.ALL })
