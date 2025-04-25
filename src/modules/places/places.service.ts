@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { filtersByCategory } from '../../constants/filters-by-category';
 import { OverpassNodeDto } from './dto/overpass-node.dto';
-// import { BookmarksModel } from '../bookmarks/bookmarks.model';
+import { InjectModel } from '@nestjs/mongoose';
+import { Favorite, FavoriteDocument } from '../favorites/schemas/favorites.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PlacesService {
+  constructor(
+    @InjectModel(Favorite.name) private readonly favoriteModel: Model<FavoriteDocument>
+  ) {}
+  
   public async getPlaceById(id: number) {
     const queryString = `[out:json];
     (
@@ -37,11 +43,11 @@ export class PlacesService {
     return res.elements as OverpassNodeDto[];
   }
 
-  // public async checkSaved(personId: string, placeId: number) {
-  //   const instance = await BookmarksModel.findOne({
-  //     where: { personId, placeId }
-  //   });
+  public async checkSaved(personId: string, placeId: number) {
+    const instance = await this.favoriteModel.findOne({
+      personId, placeId 
+    });
 
-  //   return instance !== null;
-  // }
+    return instance !== null;
+  }
 }

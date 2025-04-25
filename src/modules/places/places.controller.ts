@@ -22,7 +22,7 @@ export class PlacesController {
     const categories = Object.keys(filtersByCategory);
     return {
       place: this.dataTransformService.transformWithDesc(places, categories)[0],
-      // saved: req.user && await this.placesService.checkSaved(req.user.id, parsedId)
+      saved: req.user && await this.placesService.checkSaved(req.user.id, parsedId)
     };
   }
 
